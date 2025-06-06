@@ -10,6 +10,7 @@
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
+    "train": "ts-node apps/nestar-api/src/train.ts",
     "start:dev:batch": "nest start nestar-batch --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/apps/nestar-api/main",
