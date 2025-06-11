@@ -30,7 +30,7 @@ export class MemberInput {
 }
 
 @InputType()
-export class MemberLogin {
+export class LoginInput {
     @IsNotEmpty()
     @Length(3, 12)
     @Field(() => String)
