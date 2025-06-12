@@ -22,15 +22,39 @@
 
 // TASK-ZO
 
-function areParentheseBalanced(string: string) {
+// function areParentheseBalanced(string: string) {
+//     const list = string.split('');
+//     if(list.indexOf('(') > list.indexOf(')')){
+//         return false;
+//     } else if(list.map((value) => {return value === '('}).length != list.map((value) => {return value === ')'}).length) {
+//         return false
+//     } else {
+//         return true
+//     }
+// }
+// const result = areParentheseBalanced("string()ichida(qavslar)soni()balansda");
+// console.log("result: ", result);
+
+// TASK-ZP
+
+function countNumbersAndLetters(string: string) {
+    let numbers = [];
+    let letters = [];
+    const regexLiteral = /[A-z]/;
     const list = string.split('');
-    if(list.indexOf('(') > list.indexOf(')')){
-        return false;
-    } else if(list.map((value) => {return value === '('}).length != list.map((value) => {return value === ')'}).length) {
-        return false
-    } else {
-        return true
+    list.forEach((value) => {
+        if(value.match(regexLiteral)){
+            letters.push(value);
+        } else if(!isNaN(Number.parseInt(value))){
+            numbers.push(value);
+        }
+    })
+    const result = {
+        numbers: numbers.length,
+        letters: letters.length,
     }
+    return result;
 }
-const result = areParentheseBalanced("string()ichida(qavslar)soni()balansda");
-console.log("result: ", result);
+
+const result = countNumbersAndLetters('strings@152%');
+console.log(`letter: ${result.letters}, numbers: ${result.numbers}`);
