@@ -28,7 +28,7 @@ export class MemberService {
     public async login(input: LoginInput): Promise<Member> {
         try {
             const {memberNick, memberPassword} = input;
-            const response: null | Member = await this.memberModel
+            const response: Member = await this.memberModel
                 .findOne({memberNick: memberNick})
                 .select('+memberPassword')
                 .exec();
