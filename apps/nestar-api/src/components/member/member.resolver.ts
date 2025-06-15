@@ -6,6 +6,9 @@ import { Member } from '../../libs/dto/member/member';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import { ObjectId } from 'mongoose';
+import { MemberType } from '../../libs/enums/member.enum';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Resolver()
 export class MemberResolver {
@@ -39,6 +42,15 @@ export class MemberResolver {
         return `Hi ${memberNick}`;
     }
 
+    @Roles(MemberType.USER, MemberType.AGENT)
+    @UseGuards(RolesGuard)
+    @Mutation(() => String)
+    public async checkAuthRoles(@AuthMember("memberNick") memberNick: string): Promise<string> {
+        console.log('Mutation: checkAuthRoles');
+        console.log("memberNick: ", memberNick);
+        return `Hi ${memberNick}`;
+    }
+
     @Query(() => String)
     public async getMember(): Promise<string> {
         console.log('Query: getMember');
@@ -47,17 +59,18 @@ export class MemberResolver {
 
     /* Admin */
 
-    // Authorization: Admin
+    @Roles(MemberType.ADMIN)
+    @UseGuards(RolesGuard)
     @Mutation(() => String)
     public async getAllMembersByAdmin(): Promise<string> {
-        return '';
+        return this.memberService.getAllMembersByAdmin();
     }
 
     // Authorization: Admin
     @Mutation(() => String)
     public async updateMemberByAdmin(): Promise<string> {
         console.log('Mutation: updateMemberByAdmin');
-        return '';
+        return this.memberService.updateMemberByAdmin();
     }
     
 }

@@ -37,24 +37,47 @@
 
 // TASK-ZP
 
-function countNumbersAndLetters(string: string) {
+// function countNumbersAndLetters(string: string) {
+//     let numbers = [];
+//     let letters = [];
+//     const regexLiteral = /[A-z]/;
+//     const list = string.split('');
+//     list.forEach((value) => {
+//         if(value.match(regexLiteral)){
+//             letters.push(value);
+//         } else if(!isNaN(Number.parseInt(value))){
+//             numbers.push(value);
+//         }
+//     })
+//     const result = {
+//         numbers: numbers.length,
+//         letters: letters.length,
+//     }
+//     return result;
+// }
+
+// const result = countNumbersAndLetters('strings@152%');
+// console.log(`letter: ${result.letters}, numbers: ${result.numbers}`);
+
+// TASK-ZQ
+
+function findDuplicates(array: number[]) {
+    let count: number;
     let numbers = [];
-    let letters = [];
-    const regexLiteral = /[A-z]/;
-    const list = string.split('');
-    list.forEach((value) => {
-        if(value.match(regexLiteral)){
-            letters.push(value);
-        } else if(!isNaN(Number.parseInt(value))){
-            numbers.push(value);
+    for( let ele of array){
+        array.map((value) => {
+            if(ele===value){
+                count++;
+            }
+        })
+        if(count > 1) {
+            if(!numbers.includes(ele))
+                numbers.push(ele);
         }
-    })
-    const result = {
-        numbers: numbers.length,
-        letters: letters.length,
+        count = 0;
     }
-    return result;
+    return numbers;
 }
 
-const result = countNumbersAndLetters('strings@152%');
-console.log(`letter: ${result.letters}, numbers: ${result.numbers}`);
+const result = findDuplicates([1,2,3,4,5,4,3,4]);
+console.log("result: ", result);
