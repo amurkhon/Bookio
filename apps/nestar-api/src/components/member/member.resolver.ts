@@ -111,22 +111,22 @@ export class MemberResolver {
         console.log('Mutation: imageUploader');
 
         if (!filename) throw new Error(Message.UPLOAD_FAILED);
-    const validMime = validMimeTypes.includes(mimetype);
-    if (!validMime) throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
+        const validMime = validMimeTypes.includes(mimetype);
+        if (!validMime) throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
 
-    const imageName = getSerialForImage(filename);
-    const url = `uploads/${target}/${imageName}`;
-    const stream = createReadStream();
+        const imageName = getSerialForImage(filename);
+        const url = `uploads/${target}/${imageName}`;
+        const stream = createReadStream();
 
-    const result = await new Promise((resolve, reject) => {
-        stream
-            .pipe(createWriteStream(url))
-            .on('finish', async () => resolve(true))
-            .on('error', () => reject(false));
-    });
-    if (!result) throw new Error(Message.UPLOAD_FAILED);
+        const result = await new Promise((resolve, reject) => {
+            stream
+                .pipe(createWriteStream(url))
+                .on('finish', async () => resolve(true))
+                .on('error', () => reject(false));
+        });
+        if (!result) throw new Error(Message.UPLOAD_FAILED);
 
-    return url;
+        return url;
     }
 
     @UseGuards(AuthGuard)
