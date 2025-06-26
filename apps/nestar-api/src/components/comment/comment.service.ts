@@ -111,4 +111,13 @@ export class CommentService {
 
         return result[0];
     }
+
+    public async removeCommentByAdmin(commentId: ObjectId): Promise<Comment> {
+        const search: T = { _id: commentId, propertyStatus: CommentStatus.DELETE };
+        console.log("result: ",search);
+        const result = await this.commentModel.findByIdAndDelete(search);
+        if(!result) throw new InternalServerErrorException(Message.REMOVE_FAILED);
+
+        return result;
+    }
 }
