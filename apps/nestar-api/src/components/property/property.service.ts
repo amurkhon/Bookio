@@ -47,7 +47,7 @@ export class PropertyService {
             _id: propertyId,
             propertyStatus: PropertyStatus.ACTIVE,
         }
-        const targetProperty: Property = await this.propertyModel
+        const targetProperty = await this.propertyModel
             .findOne(search)
             .lean()
             .exec();
