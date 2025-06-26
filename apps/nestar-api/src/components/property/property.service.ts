@@ -18,7 +18,7 @@ import { lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
 export class PropertyService {
     constructor(
         @InjectModel('Property') private readonly propertyModel: Model<Property>,
-        private memberSerivice: MemberService,
+        private memberService: MemberService,
         private viewService: ViewService,
     ) {}
 
@@ -31,7 +31,7 @@ export class PropertyService {
                 modifier: 1
 
             };
-            await this.memberSerivice.memberStatsEditor(edit)
+            await this.memberService.memberStatsEditor(edit)
             return result;
         } catch (err) {
             console.log("Error, Service.model: ", err.message);
@@ -73,7 +73,7 @@ export class PropertyService {
             }
             // me likied
         }
-        targetProperty.memberData = await this.memberSerivice.getMember(null, targetProperty.memberId);
+        targetProperty.memberData = await this.memberService.getMember(null, targetProperty.memberId);
         return targetProperty;
     }
 
@@ -97,7 +97,7 @@ export class PropertyService {
         if(!updatedProperty) throw new InternalServerErrorException(Message.UPDATE_FAILED);
         
         if(soldAt || deletedAt) {
-            await this.memberSerivice.memberStatsEditor({
+            await this.memberService.memberStatsEditor({
                 _id: memberId,
                 targetKey: 'memberProperties',
                 modifier: -1,
@@ -261,7 +261,7 @@ export class PropertyService {
         if(!updatedProperty) throw new InternalServerErrorException(Message.UPDATE_FAILED);
         
         if(soldAt || deletedAt) {
-            await this.memberSerivice.memberStatsEditor({
+            await this.memberService.memberStatsEditor({
                 _id: updatedProperty.memberId,
                 targetKey: 'memberProperties',
                 modifier: -1,
