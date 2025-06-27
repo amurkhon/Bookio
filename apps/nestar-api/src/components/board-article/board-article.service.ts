@@ -46,7 +46,7 @@ export class BoardArticleService {
         };
 
         const targetBoardArticle = await this.boardArticleModel.findOne(search).exec();
-        if(!result) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+        if(!targetBoardArticle) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
         if(memberId) {
             const newView = await this.viewService.recordView({
