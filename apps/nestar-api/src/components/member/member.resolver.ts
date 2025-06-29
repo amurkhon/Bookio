@@ -34,7 +34,9 @@ export class MemberResolver {
 
     @UseGuards(AuthGuard)
     @Mutation(() => String)
-    public async checkAuth(@AuthMember("memberNick") memberNick: string): Promise<string> {
+    public async checkAuth(
+        @AuthMember("memberNick") memberNick: string
+    ): Promise<string> {
         console.log('Mutation: updateMember');
         console.log("memberNick: ", memberNick);
         return await `Hi ${memberNick}`;
@@ -110,7 +112,9 @@ export class MemberResolver {
     @Roles(MemberType.ADMIN)
     @UseGuards(RolesGuard)
     @Mutation(() => Member)
-    public async updateMemberByAdmin(@Args('input') input: MemberUpdate): Promise<Member> {
+    public async updateMemberByAdmin(
+        @Args('input') input: MemberUpdate
+    ): Promise<Member> {
         console.log('Mutation: updateMemberByAdmin');
         return await this.memberService.updateMemberByAdmin(input);
     }
