@@ -43,7 +43,9 @@ export class MemberResolver {
     @Roles(MemberType.USER, MemberType.AGENT)
     @UseGuards(RolesGuard)
     @Mutation(() => String)
-    public async checkAuthRoles(@AuthMember("memberNick") memberNick: string): Promise<string> {
+    public async checkAuthRoles(
+        @AuthMember("memberNick") memberNick: string
+    ): Promise<string> {
         console.log('Mutation: checkAuthRoles');
         console.log("memberNick: ", memberNick);
         return await `Hi ${memberNick}`;
@@ -63,7 +65,10 @@ export class MemberResolver {
     
     @UseGuards(WithoutGuard)
     @Query(() => Member)
-    public async getMember(@Args("memberId") input: string, @AuthMember("_id") memberId: ObjectId,): Promise<Member> {
+    public async getMember(
+        @Args("memberId") input: string,
+        @AuthMember("_id") memberId: ObjectId,
+    ): Promise<Member> {
         console.log('Query: getMember');
         const targetId = shapeIntoMongoObjectId(input);
         return await this.memberService.getMember(memberId, targetId);
@@ -79,12 +84,25 @@ export class MemberResolver {
         return await this.memberService.getAgents(memberId, input);
     }
 
+    @UseGuards(AuthGuard)
+    @Mutation(() => Member)
+    public async likeTargetMember(
+        @Args('memberId') input: string,
+        @AuthMember("_id") memberId: ObjectId,
+    ): Promise<Member> {
+        console.log('Mutation: likeTargetMember');
+        const likeRefId = shapeIntoMongoObjectId(input);
+        return await this.memberService.likeTargetMember(memberId, likeRefId);
+    }
+
     /* Admin */
 
     @Roles(MemberType.ADMIN)
     @UseGuards(RolesGuard)
     @Query(() => Members)
-    public async getAllMembersByAdmin(@Args('input') input: MembersInquery): Promise<Members> {
+    public async getAllMembersByAdmin(
+        @Args('input') input: MembersInquery
+    ): Promise<Members> {
         console.log("Query: getAllMembersByAdmin");
         return await this.memberService.getAllMembersByAdmin(input);
     }
