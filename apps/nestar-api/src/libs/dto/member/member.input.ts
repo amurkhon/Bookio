@@ -52,7 +52,7 @@ class AISearch {
 }
 
 @InputType()
-export class AgentsInquery {
+export class AgentsInquiry {
     @IsNotEmpty()
     @Min(1)
     @Field(() => Int)
