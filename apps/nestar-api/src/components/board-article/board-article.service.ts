@@ -116,7 +116,6 @@ export class BoardArticleService {
 
         if(articleCategory) match.articleCategory = articleCategory;
         if(text) match.articleTitle = {$regex: new RegExp(text, 'i')}
-        if(memberId) match.memberId = shapeIntoMongoObjectId(memberId);
         
         console.log('match: ', match);
 
