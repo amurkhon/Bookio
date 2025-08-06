@@ -5,7 +5,7 @@ import { ObjectId } from "mongoose";
 
 
 @InputType()
-export class PropertyUpdateInput {
+export class PropertyUpdate {
 
    @IsNotEmpty()
    @Field(() => String)

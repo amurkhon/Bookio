@@ -10,7 +10,7 @@ import { PropertyStatus } from '../../libs/enums/property.enum';
 import { ViewService } from '../view/view.service';
 import { ViewInput } from '../../libs/dto/view/view.input';
 import { ViewGroup } from '../../libs/enums/view.enum';
-import { PropertyUpdateInput } from '../../libs/dto/property/property.update';
+import { PropertyUpdate } from '../../libs/dto/property/property.update';
 import * as moment from 'moment';
 import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
 import { LikeGroup } from '../../libs/enums/like.enum';
@@ -87,7 +87,7 @@ export class PropertyService {
         return targetProperty;
     }
 
-    public async updateProperty(memberId: ObjectId, input: PropertyUpdateInput): Promise<Property> {
+    public async updateProperty(memberId: ObjectId, input: PropertyUpdate): Promise<Property> {
         
         let {propertyStatus, soldAt, deletedAt} = input;
         
@@ -288,7 +288,7 @@ export class PropertyService {
         return result[0];
     }
 
-    public async updatePropertyByAdmin(input: PropertyUpdateInput): Promise<Property> {
+    public async updatePropertyByAdmin(input: PropertyUpdate): Promise<Property> {
         
         let {propertyStatus, soldAt, deletedAt} = input;
         

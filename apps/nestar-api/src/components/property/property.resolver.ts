@@ -10,7 +10,7 @@ import { AuthMember } from '../auth/decorators/authMember.decorator';
 import { ObjectId } from 'mongoose';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
-import { PropertyUpdateInput } from '../../libs/dto/property/property.update';
+import { PropertyUpdate } from '../../libs/dto/property/property.update';
 import { AuthGuard } from '../auth/guards/auth.guard';
 
 @Resolver()
@@ -44,7 +44,7 @@ export class PropertyResolver {
     @UseGuards(RolesGuard)
     @Mutation((returns) => Property)
     public async updateProperty(
-        @Args('input') input: PropertyUpdateInput,
+        @Args('input') input: PropertyUpdate,
         @AuthMember('_id') memberId: ObjectId,
     ): Promise<Property> {
         console.log('Mutation updateProperty!');
@@ -120,7 +120,7 @@ export class PropertyResolver {
     @UseGuards(RolesGuard)
     @Mutation((returns) => Property)
     public async updatePropertyByAdmin(
-        @Args('input') input: PropertyUpdateInput,
+        @Args('input') input: PropertyUpdate,
     ): Promise<Property> {
         console.log('Mutation updatePropertyByAdmin!');
         input._id = shapeIntoMongoObjectId(input._id);
