@@ -107,7 +107,7 @@ export class PropertyService {
 
         if(!updatedProperty) throw new InternalServerErrorException(Message.UPDATE_FAILED);
         
-        if(soldAt || deletedAt) {
+        if(input.soldAt || input.deletedAt) {
             await this.memberService.memberStatsEditor({
                 _id: memberId,
                 targetKey: 'memberProperties',
