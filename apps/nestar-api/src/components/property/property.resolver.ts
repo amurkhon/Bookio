@@ -85,7 +85,7 @@ export class PropertyResolver {
     @Roles(MemberType.AGENT)
     @UseGuards(RolesGuard)
     @Query((returns) => Properties)
-    public async getAgentPrperties(
+    public async getAgentProperties(
         @Args('input') input: AgentPropertiesInquiry,
         @AuthMember('_id') memberId: ObjectId,
     ): Promise<Properties> {
