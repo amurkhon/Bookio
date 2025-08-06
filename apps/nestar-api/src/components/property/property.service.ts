@@ -101,8 +101,9 @@ export class PropertyService {
         else if (propertyStatus === PropertyStatus.DELETE) input.deletedAt = moment().toDate();
 
         const updatedProperty: Property = await this.propertyModel
-            .findOneAndUpdate(search, input, {new: true})
+            .findByIdAndUpdate(search, input, {new: true})
             .exec();
+        console.log("uP: ", updatedProperty);
 
         if(!updatedProperty) throw new InternalServerErrorException(Message.UPDATE_FAILED);
         
