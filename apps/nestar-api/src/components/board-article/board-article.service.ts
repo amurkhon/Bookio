@@ -116,8 +116,7 @@ export class BoardArticleService {
 
         if(articleCategory) match.articleCategory = articleCategory;
         if(text) match.articleTitle = {$regex: new RegExp(text, 'i')}
-        
-        console.log('match: ', match);
+        if(input?.search?.memberId) match.memberId = shapeIntoMongoObjectId(input.search.memberId);
 
         const result = await this.boardArticleModel
             .aggregate([
