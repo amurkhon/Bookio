@@ -96,7 +96,7 @@ class MISearch {
 }
 
 @InputType()
-export class MembersInquery {
+export class MembersInquiry {
     @IsNotEmpty()
     @Min(1)
     @Field(() => Int)

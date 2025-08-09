@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import MemberSchema from '../../schemas/Member.model';
 import { Model, ObjectId } from 'mongoose';
 import { Member, Members } from '../../libs/dto/member/member';
-import { MemberInput, LoginInput, AgentsInquiry, MembersInquery } from '../../libs/dto/member/member.input';
+import { MemberInput, LoginInput, AgentsInquiry, MembersInquiry } from '../../libs/dto/member/member.input';
 import { MemberStatus, MemberType } from '../../libs/enums/member.enum';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { AuthService } from '../auth/auth.service';
@@ -190,7 +190,7 @@ export class MemberService {
         return result;
     }
 
-    public async getAllMembersByAdmin(input: MembersInquery): Promise<Members> {
+    public async getAllMembersByAdmin(input: MembersInquiry): Promise<Members> {
         const { memberStatus, memberType, text } = input.search;
         const match: T = {};
         const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC};
