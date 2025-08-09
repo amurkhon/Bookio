@@ -7,7 +7,7 @@ import { BoardArticleService } from '../board-article/board-article.service';
 import { CommentInput, CommentsInquiry } from '../../libs/dto/comment/comment.input';
 import { Comment, Comments } from '../../libs/dto/comment/comment';
 import { Direction, Message } from '../../libs/enums/common.enum';
-import { StatisticModifier, T } from '../../libs/types/common';
+import { T } from '../../libs/types/common';
 import { CommentGroup, CommentStatus } from '../../libs/enums/comment.enum';
 import { CommentUpdate } from '../../libs/dto/comment/comment.update';
 import { lookupMember } from '../../libs/config';
@@ -115,7 +115,7 @@ export class CommentService {
     public async removeCommentByAdmin(commentId: ObjectId): Promise<Comment> {
         const search: T = { _id: commentId, propertyStatus: CommentStatus.DELETE };
         console.log("result: ",search);
-        const result = await this.commentModel.findByIdAndDelete(search);
+        const result = await this.commentModel.findByIdAndDelete(search).exec();
         if(!result) throw new InternalServerErrorException(Message.REMOVE_FAILED);
 
         return result;
