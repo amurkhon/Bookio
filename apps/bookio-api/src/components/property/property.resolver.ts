@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PropertyService } from './property.service';
 import { Properties, Property } from '../../libs/dto/property/property';
-import { AgentPropertiesInquiry, AllPropertiesInquiry, OrdinaryInquiry, PropertiesInquiry, PropertyInput } from '../../libs/dto/property/property.input';
+import { AuthorPropertiesInquiry, AllPropertiesInquiry, OrdinaryInquiry, PropertiesInquiry, PropertyInput } from '../../libs/dto/property/property.input';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UseGuards } from '@nestjs/common';
 import { MemberType } from '../../libs/enums/member.enum';
@@ -17,7 +17,7 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 export class PropertyResolver {
     constructor(private readonly propertyService: PropertyService) {}
 
-    @Roles(MemberType.AGENT)
+    @Roles(MemberType.AUTHOR)
     @UseGuards(RolesGuard)
     @Mutation(() => Property)
     public async createProperty(
@@ -40,7 +40,7 @@ export class PropertyResolver {
         return await this.propertyService.getProperty(memberId, propertyId);
     }
 
-    @Roles(MemberType.AGENT)
+    @Roles(MemberType.AUTHOR)
     @UseGuards(RolesGuard)
     @Mutation((returns) => Property)
     public async updateProperty(
@@ -82,15 +82,15 @@ export class PropertyResolver {
         return await this.propertyService.getVisited(memberId, input);
     }
 
-    @Roles(MemberType.AGENT)
+    @Roles(MemberType.AUTHOR)
     @UseGuards(RolesGuard)
     @Query((returns) => Properties)
-    public async getAgentProperties(
-        @Args('input') input: AgentPropertiesInquiry,
+    public async getAuthorProperties(
+        @Args('input') input: AuthorPropertiesInquiry,
         @AuthMember('_id') memberId: ObjectId,
     ): Promise<Properties> {
-        console.log('Query: getAgentProperties');
-        return await this.propertyService.getAgentProperties(memberId, input);
+        console.log('Query: getAuthorProperties');
+        return await this.propertyService.getAuthorProperties(memberId, input);
     }
 
     @UseGuards(AuthGuard)

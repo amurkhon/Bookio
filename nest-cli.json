@@ -19,13 +19,13 @@
         "tsConfigPath": "apps/bookio-api/tsconfig.app.json"
       }
     },
-    "nestar-batch": {
+    "bookio-batch": {
       "type": "application",
-      "root": "apps/nestar-batch",
+      "root": "apps/bookio-batch",
       "entryFile": "main",
-      "sourceRoot": "apps/nestar-batch/src",
+      "sourceRoot": "apps/bookio-batch/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/nestar-batch/tsconfig.app.json"
+        "tsConfigPath": "apps/bookio-batch/tsconfig.app.json"
       }
     }
   }

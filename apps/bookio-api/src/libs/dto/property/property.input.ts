@@ -179,7 +179,7 @@ class APISearch {
 }
 
 @InputType()
-export class AgentPropertiesInquiry {
+export class AuthorPropertiesInquiry {
    @IsNotEmpty()
    @Min(1)
    @Field(() => Int)

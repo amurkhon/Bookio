@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { NestarBatchModule } from '../src/batch.module';
+import { bookioBatchModule } from '../src/batch.module';
 
-describe('NestarBatchController (e2e)', () => {
+describe('bookioBatchController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [NestarBatchModule],
+      imports: [bookioBatchModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();

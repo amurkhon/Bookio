@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { MemberService } from './member.service';
 import { UseGuards } from '@nestjs/common';
-import { AgentsInquiry, LoginInput, MemberInput, MembersInquiry } from '../../libs/dto/member/member.input';
+import { AuthorsInquiry, LoginInput, MemberInput, MembersInquiry } from '../../libs/dto/member/member.input';
 import { Member, Members } from '../../libs/dto/member/member';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
@@ -42,7 +42,7 @@ export class MemberResolver {
         return await `Hi ${memberNick}`;
     }
 
-    @Roles(MemberType.USER, MemberType.AGENT)
+    @Roles(MemberType.USER, MemberType.AUTHOR)
     @UseGuards(RolesGuard)
     @Mutation(() => String)
     public async checkAuthRoles(
@@ -78,12 +78,12 @@ export class MemberResolver {
 
     @UseGuards(WithoutGuard)
     @Query(() => Members)
-    public async getAgents(
-        @Args("input") input: AgentsInquiry, 
+    public async getAuthors(
+        @Args("input") input: AuthorsInquiry, 
         @AuthMember("_id") memberId: ObjectId
     ): Promise<Members> {
-        console.log('Query: getAgents')
-        return await this.memberService.getAgents(memberId, input);
+        console.log('Query: getAuthors')
+        return await this.memberService.getAuthors(memberId, input);
     }
 
     @UseGuards(AuthGuard)

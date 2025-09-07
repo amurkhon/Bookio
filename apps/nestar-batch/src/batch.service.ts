@@ -30,7 +30,7 @@ export class BatchService {
       .updateMany(
         {
           memberStatus: MemberStatus.ACTIVE,
-          memberType: MemberType.AGENT,
+          memberType: MemberType.AUTHOR,
         },
         {
           memberRank: 0,
@@ -57,16 +57,16 @@ export class BatchService {
     await Promise.all(promisedList);
   }
 
-  public async batchTopAgents(): Promise<void> {
-    const agents: Member[] = await this.memberModel
+  public async batchTopAuthors(): Promise<void> {
+    const authors: Member[] = await this.memberModel
       .find({
         memberStatus: MemberStatus.ACTIVE,
-        memberType: MemberType.AGENT,
+        memberType: MemberType.AUTHOR,
         memberRank: 0,
       })
       .exec();
 
-    const promisedList = agents.map(async (ele: Member) => {
+    const promisedList = authors.map(async (ele: Member) => {
       const { _id, memberProperties, memberLikes, memberArticles, memberViews } = ele;
       const rank = memberProperties*4 + memberArticles*3 + memberLikes*2 + memberViews*1;
       return await this.memberModel.findByIdAndUpdate(_id, { memberRank: rank });
@@ -75,6 +75,6 @@ export class BatchService {
   }
 
   public getHello(): string {
-    return 'Welcome to Nestar BATCH Server!';
+    return 'Welcome to bookio BATCH Server!';
   }
 }
