@@ -10,7 +10,7 @@ import { MemberType } from '../../libs/enums/member.enum';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
-import { getSerialForImage, shapeIntoMongoObjectId, validMimeTypes } from '../../libs/config';
+import { getSerialForFile, shapeIntoMongoObjectId, validAudioTypes, validMimeTypes, validPdfTypes } from '../../libs/config';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { createWriteStream } from 'fs';
@@ -136,15 +136,16 @@ export class MemberResolver {
         const validMime = validMimeTypes.includes(mimetype);
         if (!validMime) throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
 
-        const imageName = getSerialForImage(filename);
+        const imageName = getSerialForFile(filename);
         const url = `uploads/${target}/${imageName}`;
+        console.log("url: ", url);
         const stream = createReadStream();
 
         const result = await new Promise((resolve, reject) => {
             stream
                 .pipe(createWriteStream(url))
                 .on('finish', async () => resolve(true))
-                .on('error', () => reject(false));
+                .on('error', (err) => {console.log("err: ",err); reject(false)});
         });
         if (!result) throw new Error(Message.UPLOAD_FAILED);
 
@@ -168,7 +169,7 @@ export class MemberResolver {
                 const validMime = validMimeTypes.includes(mimetype);
                 if (!validMime) throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
 
-                const imageName = getSerialForImage(filename);
+                const imageName = getSerialForFile(filename);
                 const url = `uploads/${target}/${imageName}`;
                 const stream = createReadStream();
 
@@ -188,6 +189,62 @@ export class MemberResolver {
 
         await Promise.all(promisedList);
         return uploadedImages;
+    }
+    
+    @UseGuards(AuthGuard)
+    @Mutation((returns) => String)
+    public async pdfUploader(
+        @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename, mimetype }: FileUpload,
+    @Args('target') target: String,
+    ): Promise<string> {
+        console.log('Mutation: pdfUploader');
+
+        if (!filename) throw new Error(Message.UPLOAD_FAILED);
+        const validMime = validPdfTypes.includes(mimetype);
+        if (!validMime) throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
+
+        const pdfName = getSerialForFile(filename);
+        const url = `uploads/${target}/${pdfName}`;
+        const stream = createReadStream();
+
+        const result = await new Promise((resolve, reject) => {
+            stream
+                .pipe(createWriteStream(url))
+                .on('finish', async () => resolve(true))
+                .on('error', () => reject(false));
+        });
+        if (!result) throw new Error(Message.UPLOAD_FAILED);
+
+        return url;
+    }
+
+    @UseGuards(AuthGuard)
+    @Mutation((returns) => String)
+    public async audioUploader(
+        @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename, mimetype }: FileUpload,
+    @Args('target') target: String,
+    ): Promise<string> {
+        console.log('Mutation: pdfUploader');
+
+        if (!filename) throw new Error(Message.UPLOAD_FAILED);
+        const validMime = validAudioTypes.includes(mimetype);
+        if (!validMime) throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
+
+        const pdfName = getSerialForFile(filename);
+        const url = `uploads/${target}/${pdfName}`;
+        const stream = createReadStream();
+
+        const result = await new Promise((resolve, reject) => {
+            stream
+                .pipe(createWriteStream(url))
+                .on('finish', async () => resolve(true))
+                .on('error', () => reject(false));
+        });
+        if (!result) throw new Error(Message.UPLOAD_FAILED);
+
+        return url;
     }
     
 }

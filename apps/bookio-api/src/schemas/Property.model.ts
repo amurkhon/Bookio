@@ -1,32 +1,26 @@
 import { Schema } from 'mongoose';
-import { PropertyLocation, PropertyStatus, PropertyType } from '../libs/enums/property.enum';
+import { PropertyStatus, PropertyCategory } from '../libs/enums/property.enum';
+import { MIN_PUBLICATION_DATE, parseDateOnlyUTC } from '../libs/dto/property/property.input';
 
 const PropertySchema = new Schema(
 	{
-		propertyType: {
-			type: String,
-			enum: PropertyType,
-			required: true,
-		},
-
 		propertyStatus: {
 			type: String,
 			enum: PropertyStatus,
 			default: PropertyStatus.ACTIVE,
 		},
-
-		propertyLocation: {
+		propertyCategory: {
 			type: String,
-			enum: PropertyLocation,
-			required: true,
-		},
-
-		propertyAddress: {
-			type: String,
+			enum: PropertyCategory,
 			required: true,
 		},
 
 		propertyTitle: {
+			type: String,
+			required: true,
+		},
+
+		propertyAuthor: {
 			type: String,
 			required: true,
 		},
@@ -36,19 +30,16 @@ const PropertySchema = new Schema(
 			required: true,
 		},
 
-		propertySquare: {
+		propertyPages: {
 			type: Number,
 			required: true,
 		},
 
-		propertyBeds: {
-			type: Number,
+		isbn: {
+			type: String,
 			required: true,
-		},
-
-		propertyRooms: {
-			type: Number,
-			required: true,
+			unique: true,
+			sparse: true,
 		},
 
 		propertyViews: {
@@ -71,23 +62,33 @@ const PropertySchema = new Schema(
 			default: 0,
 		},
 
+		propertyDownloads: {
+			type: Number,
+			default: 0,
+		},
+
+		propertyLanguages: {
+			type: [String],
+			required: true,
+		},
+
 		propertyImages: {
 			type: [String],
 			required: true,
 		},
 
+		propertyFile: {
+			type: String,
+			default: '',
+		},
+
+		propertyAudio: {
+			type: String,
+			default: '',
+		},
+
 		propertyDesc: {
 			type: String,
-		},
-
-		propertyBarter: {
-			type: Boolean,
-			default: false,
-		},
-
-		propertyRent: {
-			type: Boolean,
-			default: false,
 		},
 
 		memberId: {
@@ -96,21 +97,33 @@ const PropertySchema = new Schema(
 			ref: 'Member',
 		},
 
-		soldAt: {
-			type: Date,
-		},
-
 		deletedAt: {
 			type: Date,
 		},
 
-		constructedAt: {
+		publicationDate: {
 			type: Date,
+			required: true,
+			set: parseDateOnlyUTC,  // accepts "YYYY-MM-DD" and normalizes to 00:00:00Z
+			validate: [
+				{
+				validator: (v: Date) => v instanceof Date && !isNaN(+v),
+				message: 'publicationDate must be a valid date',
+				},
+				{
+				validator: (v: Date) => v >= MIN_PUBLICATION_DATE,
+				message: `publicationDate must be on/after ${MIN_PUBLICATION_DATE.toISOString().slice(0,10)}`,
+				},
+				{
+				validator: (v: Date) => v <= new Date(),
+				message: 'publicationDate cannot be in the future',
+				},
+			],
 		},
 	},
 	{ timestamps: true, collection: 'properties' },
 );
 
-PropertySchema.index({ propertyType: 1, propertyLocation: 1, propertyTitle: 1, propertyPrice: 1 }, { unique: true });
+PropertySchema.index({ propertyTitle: 1, propertyPrice: 1, memberId: 1 }, { unique: true });
 
 export default PropertySchema;

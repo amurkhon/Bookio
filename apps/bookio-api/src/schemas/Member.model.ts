@@ -110,6 +110,11 @@ const MemberSchema = new Schema(
             type: Number,
             default: 0,
         },
+        
+        memberMembership: {
+            type: Boolean,
+            default: false,
+        },
 
         deletedAt: {
             type: Date

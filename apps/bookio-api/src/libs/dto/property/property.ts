@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { ObjectId } from "mongoose";
 import { MemberAuthType, MemberStatus, MemberType } from "../../enums/member.enum";
-import { PropertyLocation, PropertyStatus, PropertyType } from "../../enums/property.enum";
+import { PropertyCategory, PropertyStatus } from "../../enums/property.enum";
 import { Member, TotalCounter } from "../member/member";
 import { MeLiked } from "../like/like";
 
@@ -12,17 +12,11 @@ export class Property {
     @Field(() => String)
     _id: ObjectId;
 
-    @Field(() => PropertyType)
-    propertyType: PropertyType;
-
     @Field(() => PropertyStatus)
     propertyStatus: PropertyStatus;
 
-    @Field(() => PropertyLocation)
-    propertyLocation: PropertyLocation;
-
-    @Field(() => String)
-    propertyAddress: string;
+    @Field(() => PropertyCategory)
+    propertyCategory: PropertyCategory;
 
     @Field(() => String)
     propertyTitle: string;
@@ -30,14 +24,14 @@ export class Property {
     @Field(() => Number)
     propertyPrice: number;
 
-    @Field(() => Number)
-    propertySquare: number;
+    @Field(() => String)
+    propertyAuthor: string;
 
     @Field(() => Int)
-    propertyBeds: number;
+    propertyPages: number;
 
-    @Field(() => Int)
-    propertyRooms: number;
+    @Field(() => String)
+    isbn: string;
 
     @Field(() => Int)
     propertyViews: number;
@@ -51,29 +45,32 @@ export class Property {
     @Field(() => Int)
     propertyRank: number;
 
+    @Field(() => Int)
+    propertyDownloads: number;
+
     @Field(() => [String])
     propertyImages: string[];
+
+    @Field(() => [String])
+    propertyLanguages: string[];
 
     @Field(() => String, {nullable: true})
     propertyDesc?: string;
 
-    @Field(() => Boolean)
-    propertyBarter: boolean;
+    @Field(() => String)
+    propertyFile: string;
 
-    @Field(() => Boolean)
-    propertyRent: boolean;
+    @Field(() => String)
+    propertyAudio: string;
 
     @Field(() => String)
     memberId: ObjectId;
 
     @Field(() => Date, {nullable: true})
-    soldAt?: Date;
-
-    @Field(() => Date, {nullable: true})
     deletedAt?: Date;
 
-    @Field(() => Date, {nullable: true})
-    constructedAt?: Date;
+    @Field(() => Date)
+    publicationDate: Date;
 
     @Field(() => Date)
     createdAt: Date;

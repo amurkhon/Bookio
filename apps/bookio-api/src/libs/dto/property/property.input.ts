@@ -1,24 +1,17 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
 import { IsIn, IsInt, IsNotEmpty, IsOptional, Length, Min} from "class-validator";
-import { PropertyLocation, PropertyStatus, PropertyType } from "../../enums/property.enum";
+import { PropertyStatus, PropertyCategory } from "../../enums/property.enum";
 import { ObjectId } from "mongoose";
-import { availableOptions, availablePropertySorts } from "../../config";
+import { availablePropertySorts } from "../../config";
 import { Direction } from "../../enums/common.enum";
 
 @InputType()
 export class PropertyInput {
-   @IsNotEmpty()
-   @Field(() => PropertyType)
-   propertyType: PropertyType;
-
-   @IsNotEmpty()
-   @Field(() => PropertyLocation)
-   propertyLocation: PropertyLocation;
 
    @IsNotEmpty()
    @Length(3, 100)
-   @Field(() => String)
-   propertyAddress: string;
+   @Field(() => PropertyCategory)
+   propertyCategory: PropertyCategory;
 
    @IsNotEmpty()
    @Length(3, 100)
@@ -26,47 +19,49 @@ export class PropertyInput {
    propertyTitle: string;
 
    @IsNotEmpty()
+   @Length(3, 100)
+   @Field(() => String)
+   propertyAuthor: string;
+
+   @IsNotEmpty()
    @Field(() => Number)
    propertyPrice: number;
 
    @IsNotEmpty()
-   @Field(() => Int)
-   propertySquare: number;
+   @Length(13)
+   @Field(() => String)
+   isbn: string;
 
    @IsNotEmpty()
-   @IsInt()
-   @Min(1)
-   @Field(() => Int)
-   propertyBeds: number;
+   @Field(() => Number)
+   propertyPages: number;
 
    @IsNotEmpty()
-   @IsInt()
-   @Min(1)
-   @Field(() => Int)
-   propertyRooms: number;
+   @Field(() => [String])
+   propertyLanguages: string[];
 
    @IsNotEmpty()
    @Field(() => [String])
    propertyImages: string[];
 
    @IsOptional()
-   @Length(5, 500)
+   @Field(() => String, {nullable: true})
+   propertyFile?: string;
+
+   @IsOptional()
+   @Field(() => String, {nullable: true})
+   propertyAudio?: string;
+
+   @IsOptional()
+   @Length(5, 2200)
    @Field(() => String, { nullable: true })
    propertyDesc?: string;
 
-   @IsOptional()
-   @Field(() => Boolean, { nullable: true })
-   propertyBarter?: boolean;
-
-   @IsOptional()
-   @Field(() => Boolean, { nullable: true })
-   propertyRent?: boolean;
-
    memberId?: ObjectId;
 
-   @IsOptional()
-   @Field(() => Date, { nullable: true })
-   constructedAt?: Date;
+   @IsNotEmpty()
+   @Field(() => String)
+   publicationDate: string;
 }
 
 
@@ -80,7 +75,7 @@ export class PricesRange{
 }
 
 @InputType()
-export class SquaresRange{
+export class PagesRange{
    @Field(() => Int)
    start: number;
 
@@ -103,27 +98,10 @@ class PISearch{
    @IsOptional()
    @Field(() => String, {nullable: true})
    memberId?: ObjectId;
-
-   @IsOptional()
-   @Field(() => [PropertyLocation], {nullable: true})
-   locationList?: PropertyLocation[];
    
    @IsOptional()
-   @Field(() => [PropertyType], {nullable: true})
-   typeList?: PropertyType[];
-
-   @IsOptional()
-   @Field(() => [Int], {nullable: true})
-   roomsList?: Number[];
-
-   @IsOptional()
-   @Field(() => [Int], {nullable: true})
-   bedsList?: Number[];
-
-   @IsOptional()
-   @IsIn(availableOptions, {each: true})
-   @Field(() => [String], {nullable: true})
-   options?: string[];
+   @Field(() => [PropertyCategory], {nullable: true})
+   propertyCategory?: PropertyCategory[];
 
    @IsOptional()
    @Field(() => PricesRange, {nullable: true})
@@ -134,8 +112,8 @@ class PISearch{
    periodsRange?: PeriodsRange;
 
    @IsOptional()
-   @Field(() => SquaresRange, {nullable: true})
-   squaresRange?: SquaresRange;
+   @Field(() => PagesRange, {nullable: true})
+   pagesRange?: PagesRange;
 
    @IsOptional()
    @Field(() => String, {nullable: true})
@@ -209,10 +187,6 @@ class ALPISearch {
    @IsOptional()
    @Field(() => PropertyStatus, {nullable: true})
    propertyStatus?: PropertyStatus;
-
-   @IsOptional()
-   @Field(() => [PropertyLocation], {nullable: true})
-   propertyLocationList?: PropertyLocation[];
 }
 
 @InputType()
@@ -253,3 +227,21 @@ export class OrdinaryInquiry {
    @Field(() => Int)
    limit: number;
 }
+
+export function parseDateOnlyUTC(v: any): Date | undefined {
+  if (!v) return v;
+  if (v instanceof Date) return v;
+  if (typeof v === 'string') {
+    const m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m) {
+      const [, y, mo, d] = m;
+      return new Date(Date.UTC(+y, +mo - 1, +d, 0, 0, 0));
+    }
+    // fallback: try native parser (expects ISO)
+    const d2 = new Date(v);
+    return isNaN(+d2) ? undefined : d2;
+  }
+  return undefined;
+}
+
+export const MIN_PUBLICATION_DATE = new Date('1450-01-01T00:00:00Z');

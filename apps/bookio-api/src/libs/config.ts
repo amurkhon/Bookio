@@ -2,7 +2,6 @@ import { ObjectId } from "bson";
 
 export const availableAuthorSorts = ['createdAt','updatetedAt','memberLikes','memberViews','memberRank'];
 export const availableMemberSorts = ['createdAt','updatetedAt','memberLikes','memberViews'];
-export const availableOptions = ['propertyBarter', 'propertyRent'];
 export const availablePropertySorts = [
 	'createdAt',
 	'updatedAt',
@@ -19,8 +18,10 @@ import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { T } from "./types/common";
 
-export const validMimeTypes = ['image/png', 'image/jpg', 'image/jpeg'];
-export const getSerialForImage = (filename: string) => {
+export const validMimeTypes = ['image/png', 'audio/mp4', 'audio/ogg','audio/mp3','audio/webm'];
+export const validAudioTypes = ['audio/mpeg', 'image/jpg', 'image/jpeg'];
+export const validPdfTypes = ['application/pdf', 'application/x-pdf','application/epub+zip','application/x-mobipocket-ebook','application/x-ibooks+zip'];
+export const getSerialForFile = (filename: string) => {
 	const ext = path.parse(filename).ext;
 	return uuidv4() + ext;
 };
