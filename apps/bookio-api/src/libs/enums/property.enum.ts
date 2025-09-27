@@ -26,3 +26,12 @@ export enum PropertyCategory {
 registerEnumType(PropertyCategory, {
 	name: 'PropertyCategory',
 });
+
+export enum PropertyType {
+	PAPERBACK = 'PAPERBACK',
+	HARDCOVER = 'HARDCOVER',
+	FULL = 'FULL',
+}
+registerEnumType(PropertyType, {
+	name: 'PropertyType',
+});

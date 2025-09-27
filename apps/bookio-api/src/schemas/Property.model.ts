@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { PropertyStatus, PropertyCategory } from '../libs/enums/property.enum';
+import { PropertyStatus, PropertyCategory, PropertyType } from '../libs/enums/property.enum';
 import { MIN_PUBLICATION_DATE, parseDateOnlyUTC } from '../libs/dto/property/property.input';
 
 const PropertySchema = new Schema(
@@ -9,6 +9,13 @@ const PropertySchema = new Schema(
 			enum: PropertyStatus,
 			default: PropertyStatus.ACTIVE,
 		},
+		
+		propertyType: {
+			type: String,
+			enum: PropertyType,
+			default: PropertyType.FULL,
+		},
+
 		propertyCategory: {
 			type: String,
 			enum: PropertyCategory,
