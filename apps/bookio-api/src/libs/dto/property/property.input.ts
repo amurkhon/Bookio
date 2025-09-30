@@ -33,7 +33,7 @@ export class PropertyInput {
    propertyPrice: number;
 
    @IsNotEmpty()
-   @Length(13)
+   @Length(14)
    @Field(() => String)
    isbn: string;
 
