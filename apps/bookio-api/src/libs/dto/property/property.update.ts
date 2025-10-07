@@ -1,6 +1,6 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
 import { IsInt, IsNotEmpty, IsNumber, IsOptional, Length, Min} from "class-validator";
-import { PropertyStatus, PropertyType} from "../../enums/property.enum";
+import { PropertyLanguage, PropertyStatus, PropertyType} from "../../enums/property.enum";
 import { ObjectId } from "mongoose";
 
 
@@ -54,8 +54,8 @@ export class PropertyUpdate {
    propertyImages?: string[];
 
    @IsOptional()
-   @Field(() => [String], { nullable: true })
-   propertyLanguages?: string[];
+   @Field(() => [PropertyLanguage], { nullable: true })
+   propertyLanguages?: PropertyLanguage[];
 
    @IsOptional()
    @Length(5, 2000)

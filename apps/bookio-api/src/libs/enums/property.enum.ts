@@ -35,3 +35,12 @@ export enum PropertyType {
 registerEnumType(PropertyType, {
 	name: 'PropertyType',
 });
+
+export enum PropertyLanguage {
+	ENGLISH = 'English',
+	KOREAN = 'Korean',
+	UZBEK= 'Uzbek',
+}
+registerEnumType(PropertyLanguage, {
+	name: 'PropertyLanguage',
+});

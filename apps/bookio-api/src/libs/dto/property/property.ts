@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { ObjectId } from "mongoose";
 import { MemberAuthType, MemberStatus, MemberType } from "../../enums/member.enum";
-import { PropertyCategory, PropertyStatus, PropertyType } from "../../enums/property.enum";
+import { PropertyCategory, PropertyLanguage, PropertyStatus, PropertyType } from "../../enums/property.enum";
 import { Member, TotalCounter } from "../member/member";
 import { MeLiked } from "../like/like";
 
@@ -54,8 +54,8 @@ export class Property {
     @Field(() => [String])
     propertyImages: string[];
 
-    @Field(() => [String])
-    propertyLanguages: string[];
+    @Field(() => [PropertyLanguage])
+    propertyLanguages: PropertyLanguage[];
 
     @Field(() => String, {nullable: true})
     propertyDesc?: string;

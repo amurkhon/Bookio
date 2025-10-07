@@ -155,10 +155,14 @@ export class PropertyService {
             pricesRange,
             pagesRange,
             text,
+            typeList,
+            languageList,
         } = input.search;
 
         if(memberId) match.memberId = shapeIntoMongoObjectId(memberId);
         if(propertyCategory && propertyCategory.length) match.propertyCategory = { $in: propertyCategory };
+        if(typeList && typeList.length) match.propertyType = { $in: typeList };
+        if(languageList && languageList.length) match.propertyLanguages = { $in: languageList };
 
         if(pricesRange) match.propertyPrice = { $gte: pricesRange.start, $lte: pricesRange.end}
         if(periodsRange) match.createdAt = { $gte: periodsRange.start, $lte: periodsRange.end}
