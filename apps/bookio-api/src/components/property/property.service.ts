@@ -250,11 +250,12 @@ export class PropertyService {
     }
 
     public async getAllPropertiesByAdmin(input: AllPropertiesInquiry): Promise<Properties> {
-        const { propertyStatus } = input.search;
+        const { propertyStatus, propertyCategoryList } = input.search;
         const match: T = {};
         const sort: T = {[input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC};
 
         if(propertyStatus) match.propertyStatus = propertyStatus;
+        if(propertyCategoryList) match.propertyCategory = propertyCategoryList[0];
 
         const result = await this.propertyModel
             .aggregate([

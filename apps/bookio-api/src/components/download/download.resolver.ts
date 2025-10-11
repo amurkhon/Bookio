@@ -6,7 +6,6 @@ import { Download } from '../../libs/dto/download/download';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import { ObjectId } from 'mongoose';
 import { shapeIntoMongoObjectId } from '../../libs/config';
-import { DownloadInput } from '../../libs/dto/download/download.input';
 
 @Resolver()
 export class DownloadResolver {

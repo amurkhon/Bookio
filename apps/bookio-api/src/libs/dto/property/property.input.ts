@@ -200,6 +200,10 @@ class ALPISearch {
    @IsOptional()
    @Field(() => PropertyStatus, {nullable: true})
    propertyStatus?: PropertyStatus;
+
+   @IsOptional()
+   @Field(() => [PropertyCategory], {nullable: true})
+   propertyCategoryList?: PropertyCategory[];
 }
 
 @InputType()
