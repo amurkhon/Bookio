@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { Notification } from '../../libs/dto/notification/notification';
-import { NotificationInput } from '../../libs/dto/notification/notification.input';
-import { Message } from '../../libs/enums/common.enum';
+import { Notification, Notifications } from '../../libs/dto/notification/notification';
+import { NotificationInput, NotificationsInquiry } from '../../libs/dto/notification/notification.input';
+import { Direction, Message } from '../../libs/enums/common.enum';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { NotificationStatusModifier, T } from '../../libs/types/common';
 import { NotificationStatus } from '../../libs/enums/notification.enum';
@@ -58,6 +58,42 @@ export class NotificationService {
         }
         targetNotification.memberData = await this.memberService.getMember(null, targetNotification?.authorId);
         return targetNotification;
+    }
+
+    public async getNotifications(memberId: ObjectId, input: NotificationsInquiry): Promise<Notifications> {
+        const { status } = input;
+
+        const match: T = status ? {notificationStatus: status, receiverId: memberId} : {receiverId: memberId};
+        const sort: T = { createdAt: Direction.DESC };
+
+        const result = await this.notificationModel
+            .aggregate([
+                {$match: match},
+                {$sort: sort},
+                {
+                    $facet: {
+                        list: [
+                            {
+                                $lookup: {
+                                    from: 'members',
+                                    localField: 'authorId',
+                                    foreignField: '_id',
+                                    as: 'memberData',
+                                }
+                            },
+                            {$unwind: '$memberData'}
+                        ],
+                        metaCounter: [
+                            {$count: 'total'}
+                        ]
+                    }
+                }
+            ])
+            .exec()
+
+        if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+        return result[0];
     }
 
     public async notificationStatusChanger(input: NotificationStatusModifier): Promise<Notification> {

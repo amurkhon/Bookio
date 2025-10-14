@@ -1,7 +1,7 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { ObjectId } from "mongoose";
 import { NotificationGroup, NotificationStatus, NotificationType } from "../../enums/notification.enum";
-import { Member } from "../member/member";
+import { Member, TotalCounter } from "../member/member";
 
 @ObjectType()
 export class Notification {
@@ -45,4 +45,13 @@ export class Notification {
     
     @Field(() => Member, {nullable: true})
     memberData?: Member;
+}
+
+@ObjectType()
+export class Notifications {
+    @Field(() => [Notification])
+    list: Notification[];
+
+    @Field(() => [TotalCounter], { nullable: true })
+    metaCounter: TotalCounter[];
 }
