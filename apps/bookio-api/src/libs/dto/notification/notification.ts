@@ -1,6 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { ObjectId } from "mongoose";
 import { NotificationGroup, NotificationStatus, NotificationType } from "../../enums/notification.enum";
+import { Member } from "../member/member";
 
 @ObjectType()
 export class Notification {
@@ -39,4 +40,9 @@ export class Notification {
 
     @Field(() => Date)
     updatedAt: Date;
+
+    // from aggregation
+    
+    @Field(() => Member, {nullable: true})
+    memberData?: Member;
 }
