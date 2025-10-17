@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MemberResolver } from './member.resolver';
 import { MemberService } from './member.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -7,6 +7,7 @@ import { AuthModule } from '../auth/auth.module';
 import { ViewModule } from '../view/view.module';
 import { LikeModule } from '../like/like.module';
 import FollowSchema from '../../schemas/Follow.model';
+import { NotificationModule } from '../notification/notification.module';
 @Module({
   imports: [ 
     MongooseModule.forFeature([
@@ -24,6 +25,7 @@ import FollowSchema from '../../schemas/Follow.model';
     AuthModule, 
     ViewModule,
     LikeModule,
+    forwardRef(() => NotificationModule),
   ],
   providers: [MemberResolver, MemberService],
   exports: [MemberService]

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { NotificationResolver } from './notification.resolver';
 import { NotificationService } from './notification.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -15,7 +15,7 @@ import { MemberModule } from '../member/member.module';
       },
     ]),
     AuthModule,
-    MemberModule,
+    forwardRef(() => MemberModule)
   ],
   providers: [NotificationResolver, NotificationService],
   exports: [NotificationService],

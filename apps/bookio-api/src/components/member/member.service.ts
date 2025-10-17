@@ -1,6 +1,5 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import MemberSchema from '../../schemas/Member.model';
 import { Model, ObjectId } from 'mongoose';
 import { Member, Members } from '../../libs/dto/member/member';
 import { MemberInput, LoginInput, AuthorsInquiry, MembersInquiry } from '../../libs/dto/member/member.input';
@@ -16,7 +15,10 @@ import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { LikeService } from '../like/like.service';
 import { Follower, Following, MeFollowed } from '../../libs/dto/follow/follow';
-import { lookupAuthMemberLiked } from '../../libs/config';
+import { lookupAuthMemberLiked, shapeIntoMongoObjectId } from '../../libs/config';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationInput } from '../../libs/dto/notification/notification.input';
+import { NotificationGroup, NotificationType } from '../../libs/enums/notification.enum';
 
 @Injectable()
 export class MemberService {
@@ -27,6 +29,8 @@ export class MemberService {
         private authService: AuthService,
         private viewService: ViewService,
         private likeService: LikeService,
+        @Inject(forwardRef(() => NotificationService))
+        private readonly notificationService: NotificationService,
     ) {}
 
     public async signup(input: MemberInput): Promise<Member> {
@@ -178,6 +182,20 @@ export class MemberService {
 
         // Like Toggle via Like modules
         const modifier: number = await this.likeService.toggleLike(input);
+
+
+        // Creating notification
+        
+        const notificationInput: NotificationInput = {
+            notificationType: NotificationType.LIKE,
+            notificationGroup: NotificationGroup.MEMBER,
+            notificationTitle:'Like Member',
+            receiverId: shapeIntoMongoObjectId(likeRefId),
+            notificationDesc: 'This person liked you!'
+        }
+
+        if( modifier > 0)
+            await this.notificationService.createNotification(memberId, notificationInput);
 
         const result = await this.memberStatsEditor({
             _id: likeRefId,

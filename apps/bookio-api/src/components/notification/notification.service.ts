@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Notification, Notifications } from '../../libs/dto/notification/notification';
@@ -14,6 +14,7 @@ export class NotificationService {
 
     constructor(
         @InjectModel('Notification') private readonly notificationModel: Model<Notification>,
+        @Inject(forwardRef(() => MemberService))
         private memberService: MemberService,
     ) {}
 
