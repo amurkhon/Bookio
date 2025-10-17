@@ -17,6 +17,7 @@ import { MemberModule } from '../member/member.module';
     AuthModule,
     MemberModule,
   ],
-  providers: [NotificationResolver, NotificationService]
+  providers: [NotificationResolver, NotificationService],
+  exports: [NotificationService],
 })
 export class NotificationModule {}

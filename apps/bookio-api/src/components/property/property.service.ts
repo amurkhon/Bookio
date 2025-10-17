@@ -16,6 +16,9 @@ import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeService } from '../like/like.service';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationInput } from '../../libs/dto/notification/notification.input';
+import { NotificationGroup, NotificationType } from '../../libs/enums/notification.enum';
 
 @Injectable()
 export class PropertyService {
@@ -24,6 +27,7 @@ export class PropertyService {
         private memberService: MemberService,
         private viewService: ViewService,
         private likeService: LikeService,
+        private readonly notificationService: NotificationService,
     ) {}
 
     public async createProperty(input: PropertyInput): Promise<Property> {
@@ -237,6 +241,20 @@ export class PropertyService {
 
         // Like Toggle via Like modules
         const modifier: number = await this.likeService.toggleLike(input);
+
+        // Creating notification
+
+        const notificationInput: NotificationInput = {
+            notificationType: NotificationType.LIKE,
+            notificationGroup: NotificationGroup.PROPERTY,
+            notificationTitle:'Like Property',
+            receiverId: shapeIntoMongoObjectId(target.memberId),
+            propertyId: shapeIntoMongoObjectId(likeRefId),
+            notificationDesc: 'This person liked your book!'
+        }
+
+        if( modifier > 0)
+            await this.notificationService.createNotification(memberId, notificationInput);
 
         const result = await this.propertyStatsEditor({
             _id: likeRefId,
