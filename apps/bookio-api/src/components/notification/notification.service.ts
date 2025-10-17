@@ -25,10 +25,7 @@ export class NotificationService {
             input.articleId = shapeIntoMongoObjectId(input.articleId);
         input.receiverId = shapeIntoMongoObjectId(input.receiverId);
         try {
-            
-            const result = await this.notificationModel.create(input);
-
-            return result;
+                return await this.notificationModel.create(input);
         } catch(err) {
             console.log('Error, createNotification: ', err.message);
             throw new BadRequestException(Message.CREATE_FAILED);
@@ -72,7 +69,9 @@ export class NotificationService {
                 {$sort: sort},
                 {
                     $facet: {
-                        list: [
+                        list: [],
+                        memberNotification: [
+                            {$match: { notificationGroup: 'MEMBER'}},
                             {
                                 $lookup: {
                                     from: 'members',
@@ -81,15 +80,65 @@ export class NotificationService {
                                     as: 'memberData',
                                 }
                             },
-                            {$unwind: '$memberData'}
+                            {$unwind: '$memberData'},
+                        ],
+                        propertyNotification: [
+                            {
+                                $lookup: {
+                                    from: 'members',
+                                    localField: 'authorId',
+                                    foreignField: '_id',
+                                    as: 'memberData',
+                                }
+                            },
+                            {$unwind: '$memberData'},
+                            {
+                                $lookup: {
+                                    from: 'properties',
+                                    let: { pid: '$propertyId'},
+                                    pipeline: [
+                                        { $match: { $expr: {$and: [ { $ne: ['$propertyId', null] }, {$eq: ['$_id', '$$pid'] } ] } } }
+                                    ],
+                                    as: 'propertyData'
+                                }
+                            },
+                            {$unwind: '$propertyData'},
+                        ],
+                        articleNotification: [
+                            {
+                                $lookup: {
+                                    from: 'members',
+                                    localField: 'authorId',
+                                    foreignField: '_id',
+                                    as: 'memberData',
+                                }
+                            },
+                            {$unwind: '$memberData'},
+                            {
+                                $lookup: {
+                                    from: 'boardArticles',
+                                    let: { pid: '$articleId'},
+                                    pipeline: [
+                                        { $match: { $expr: {$and: [ { $ne: ['$articleId', null] }, {$eq: ['$_id', '$$pid'] } ] } } }
+                                    ],
+                                    as: 'articleData'
+                                }
+                            },
+                            {$unwind: '$articleData'},
                         ],
                         metaCounter: [
                             {$count: 'total'}
                         ]
                     }
-                }
+                },
             ])
             .exec()
+
+        result[0].list = [].concat(result[0].memberNotification, result[0].propertyNotification, result[0].articleNotification);
+
+        delete result[0].memberNotification;
+        delete result[0].propertyNotification;
+        delete result[0].articleNotification;
 
         if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
