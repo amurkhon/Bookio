@@ -1,9 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { NoticeInput } from '../../libs/dto/notice/notice.input';
-import { Notice } from '../../libs/dto/notice/notice';
+import { NoticeInput, NoticeInquiry } from '../../libs/dto/notice/notice.input';
+import { Notice, Notices } from '../../libs/dto/notice/notice';
 import { Message } from '../../libs/enums/common.enum';
+import { T } from '../../libs/types/common';
+import { NoticeStatus } from '../../libs/enums/notice.enum';
 
 @Injectable()
 export class NoticeService {
@@ -20,5 +22,29 @@ export class NoticeService {
             console.log("Error, createNotice: ", err.message);
             throw new BadRequestException(Message.CREATE_FAILED);
         }
+    }
+
+    public async getNotices(input: NoticeInquiry): Promise<Notices> {
+        const { text } = input.search;
+        const match: T = {noticeStatus: NoticeStatus.ACTIVE};
+        const sort: T = { createdAt: -1};
+
+        if(text) match.noticeTitle = { $regex: new RegExp(text, 'i') };
+
+        const result = await this.noticeModel
+            .aggregate([
+                { $match: match },
+                { $sort: sort },
+                {
+                    $facet: {
+                        list: [{ $skip: (input.page - 1) * input.limit}, { $limit: input.limit }],
+                        metaCounter: [{ $count: 'total' }],
+                    }
+                }
+            ])
+            .exec()
+        if(!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+        return result[0];
     }
 }

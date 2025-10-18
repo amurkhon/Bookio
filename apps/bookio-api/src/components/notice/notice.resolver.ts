@@ -1,12 +1,12 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { MemberType } from '../../libs/enums/member.enum';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { NoticeService } from './notice.service';
-import { Notice } from '../../libs/dto/notice/notice';
-import { NoticeInput } from '../../libs/dto/notice/notice.input';
+import { Notice, Notices } from '../../libs/dto/notice/notice';
+import { NoticeInput, NoticeInquiry } from '../../libs/dto/notice/notice.input';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import { ObjectId } from 'mongoose';
 
@@ -25,5 +25,14 @@ export class NoticeResolver {
         @AuthMember('_id') memberId: ObjectId
     ): Promise<Notice> {
         return await this.noticeService.createNotice(memberId, input);
+    }
+
+    @Roles(MemberType.ADMIN)
+    @UseGuards(RolesGuard)
+    @Query((returns) => Notices)
+    public async getNotices(
+        @Args('input') input: NoticeInquiry,
+    ): Promise<Notices> {
+        return await this.noticeService.getNotices(input);
     }
 }
