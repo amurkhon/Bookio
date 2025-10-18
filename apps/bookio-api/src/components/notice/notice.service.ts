@@ -6,6 +6,7 @@ import { Notice, Notices } from '../../libs/dto/notice/notice';
 import { Message } from '../../libs/enums/common.enum';
 import { T } from '../../libs/types/common';
 import { NoticeStatus } from '../../libs/enums/notice.enum';
+import { UpdateNotice } from '../../libs/dto/notice/notice.update';
 
 @Injectable()
 export class NoticeService {
@@ -46,5 +47,15 @@ export class NoticeService {
         if(!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
         return result[0];
+    }
+
+    public async updateNotice(input: UpdateNotice): Promise<Notice> {
+        const { _id, noticeStatus } = input;
+
+        const result = await this.noticeModel.findOneAndUpdate({_id: _id},{ noticeStatus: noticeStatus}, { new: true}).exec();
+
+        if(!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
+
+        return result;
     }
 }

@@ -9,6 +9,7 @@ import { Notice, Notices } from '../../libs/dto/notice/notice';
 import { NoticeInput, NoticeInquiry } from '../../libs/dto/notice/notice.input';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import { ObjectId } from 'mongoose';
+import { UpdateNotice } from '../../libs/dto/notice/notice.update';
 
 @Resolver()
 export class NoticeResolver {
@@ -34,5 +35,14 @@ export class NoticeResolver {
         @Args('input') input: NoticeInquiry,
     ): Promise<Notices> {
         return await this.noticeService.getNotices(input);
+    }
+
+    @Roles(MemberType.ADMIN)
+    @UseGuards(RolesGuard)
+    @Mutation((returns) => Notice)
+    public async updateNotice(
+        @Args('input') input: UpdateNotice,
+    ): Promise<Notice> {
+        return await this.noticeService.updateNotice(input);
     }
 }
