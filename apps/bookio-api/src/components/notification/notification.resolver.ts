@@ -44,4 +44,14 @@ export class NotificationResolver {
         console.log('Query getNotification');
         return await this.notificationService.getNotifications(memberId, input);
     }
+
+    @UseGuards(AuthGuard)
+    @Mutation((returns) => [Notification])
+    public async updateNotificationsAsRead(
+        @Args('input') input: NotificationsInquiry,
+        @AuthMember('_id') memberId: ObjectId,
+    ): Promise<Notification[]> {
+        console.log('Query updateNotificationsAsRead');
+        return await this.notificationService.updateNotificationsAsRead(memberId, input);
+    }
 }

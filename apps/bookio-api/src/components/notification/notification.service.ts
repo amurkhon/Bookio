@@ -146,6 +146,26 @@ export class NotificationService {
         return result[0];
     }
 
+    public async updateNotificationsAsRead(memberId: ObjectId, input: NotificationsInquiry): Promise<Notification[]> {
+        const search: T = {
+            notificationStatus: input.status,
+            receiverId: memberId,
+        };
+        console.log("status: ", input);
+        await this.notificationModel.updateMany(search, { notificationStatus: NotificationStatus.READ}).exec();
+        
+        const result = await this.notificationModel.find(
+            {
+                notificationStatus: NotificationStatus.READ,
+                receiverId: memberId,
+            }
+        )
+        .exec()
+        console.log("result: ", result);
+        
+        return result;
+    }
+
     public async notificationStatusChanger(input: NotificationStatusModifier): Promise<Notification> {
         const { _id, targetKey, modifier } = input;
         return await this.notificationModel.findOneAndUpdate(
