@@ -18,8 +18,7 @@ export class NoticeResolver {
         private readonly noticeService: NoticeService,
     ) {}
 
-    @Roles(MemberType.ADMIN)
-    @UseGuards(RolesGuard)
+    @UseGuards(AuthGuard)
     @Mutation((returns) => Notice)
     public async createNotice(
         @Args('input') input: NoticeInput,
@@ -28,8 +27,7 @@ export class NoticeResolver {
         return await this.noticeService.createNotice(memberId, input);
     }
 
-    @Roles(MemberType.ADMIN)
-    @UseGuards(RolesGuard)
+    @UseGuards(AuthGuard)
     @Query((returns) => Notices)
     public async getNotices(
         @Args('input') input: NoticeInquiry,

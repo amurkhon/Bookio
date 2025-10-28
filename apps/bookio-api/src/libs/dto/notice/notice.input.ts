@@ -26,6 +26,10 @@ export class NoticeInput {
 @InputType()
 class NISearch {
 
+    @IsNotEmpty()
+    @Field(() => NoticeCategory)
+    noticeCategory: NoticeCategory;
+
     @IsOptional()
     @Field(() => String, { nullable: true })
     text?: string;

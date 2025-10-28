@@ -26,11 +26,12 @@ export class NoticeService {
     }
 
     public async getNotices(input: NoticeInquiry): Promise<Notices> {
-        const { text } = input.search;
+        const { text, noticeCategory } = input.search;
         const match: T = {noticeStatus: NoticeStatus.ACTIVE};
         const sort: T = { createdAt: -1};
 
         if(text) match.noticeTitle = { $regex: new RegExp(text, 'i') };
+        if(noticeCategory) match.noticeCategory = noticeCategory;
 
         const result = await this.noticeModel
             .aggregate([
