@@ -21,6 +21,12 @@ export class Notice {
 
     @Field(() => String)
     memberId: ObjectId;
+
+    @Field(() => Date)
+    createdAt: Date;
+
+    @Field(() => Date)
+    updatedAt: Date;
 }
 
 @ObjectType()
