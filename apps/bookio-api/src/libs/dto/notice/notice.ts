@@ -1,11 +1,13 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { NoticeCategory, NoticeStatus } from "../../enums/notice.enum";
 import { ObjectId } from "mongoose";
-import { TotalCounter } from "../member/member";
+import { Member, TotalCounter } from "../member/member";
 
 
 @ObjectType()
 export class Notice {
+    @Field(() => String)
+    _id: ObjectId;
 
     @Field(() => NoticeCategory)
     noticeCategory: NoticeCategory;
@@ -27,6 +29,9 @@ export class Notice {
 
     @Field(() => Date)
     updatedAt: Date;
+
+    @Field(() => Member, {nullable: true})
+    memberData?: Member;
 }
 
 @ObjectType()

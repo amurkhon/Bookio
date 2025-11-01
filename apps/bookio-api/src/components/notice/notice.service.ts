@@ -7,6 +7,7 @@ import { Message } from '../../libs/enums/common.enum';
 import { T } from '../../libs/types/common';
 import { NoticeStatus } from '../../libs/enums/notice.enum';
 import { UpdateNotice } from '../../libs/dto/notice/notice.update';
+import { lookupMember } from '../../libs/config';
 
 @Injectable()
 export class NoticeService {
@@ -26,8 +27,8 @@ export class NoticeService {
     }
 
     public async getNotices(input: NoticeInquiry): Promise<Notices> {
-        const { text, noticeCategory } = input.search;
-        const match: T = {noticeStatus: NoticeStatus.ACTIVE};
+        const { text, noticeCategory, noticeStatus } = input.search;
+        const match: T = noticeStatus ? { noticeStatus: noticeStatus } : {};
         const sort: T = { createdAt: -1};
 
         if(text) match.noticeTitle = { $regex: new RegExp(text, 'i') };
@@ -39,12 +40,18 @@ export class NoticeService {
                 { $sort: sort },
                 {
                     $facet: {
-                        list: [{ $skip: (input.page - 1) * input.limit}, { $limit: input.limit }],
+                        list: [
+                            { $skip: (input.page - 1) * input.limit},
+                            { $limit: input.limit },
+                            lookupMember,
+                            {$unwind: '$memberData'}
+                        ],
                         metaCounter: [{ $count: 'total' }],
                     }
                 }
             ])
             .exec()
+        console.log("result: ", result[0]);
         if(!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
         return result[0];
