@@ -8,12 +8,14 @@ import { T } from '../../libs/types/common';
 import { NoticeStatus } from '../../libs/enums/notice.enum';
 import { UpdateNotice } from '../../libs/dto/notice/notice.update';
 import { lookupMember } from '../../libs/config';
+import { MemberService } from '../member/member.service';
 
 @Injectable()
 export class NoticeService {
 
     constructor (
         @InjectModel('Notice') private readonly noticeModel: Model<Notice>,
+        private memberService: MemberService,
     ) {}
 
     public async createNotice(memberId: ObjectId, input: NoticeInput): Promise<Notice> {
@@ -24,6 +26,15 @@ export class NoticeService {
             console.log("Error, createNotice: ", err.message);
             throw new BadRequestException(Message.CREATE_FAILED);
         }
+    }
+
+    public async getNotice( input: string): Promise<Notice> {
+        const result =  await this.noticeModel.findOne({_id: input});
+        if(!result) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+        result.memberData = await this.memberService.getMember(null, result.memberId);
+
+        return result;
     }
 
     public async getNotices(input: NoticeInquiry): Promise<Notices> {
@@ -51,7 +62,6 @@ export class NoticeService {
                 }
             ])
             .exec()
-        console.log("result: ", result[0]);
         if(!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
         return result[0];
@@ -59,8 +69,9 @@ export class NoticeService {
 
     public async updateNotice(input: UpdateNotice): Promise<Notice> {
         const { _id, noticeStatus } = input;
+        console.log("input",input);
 
-        const result = await this.noticeModel.findOneAndUpdate({_id: _id},{ noticeStatus: noticeStatus}, { new: true}).exec();
+        const result = await this.noticeModel.findOneAndUpdate({_id: _id},input, { new: true}).exec();
 
         if(!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
 

@@ -27,6 +27,15 @@ export class NoticeResolver {
         return await this.noticeService.createNotice(memberId, input);
     }
 
+    @Roles(MemberType.ADMIN)
+    @UseGuards(RolesGuard)
+    @Query((returns) => Notice)
+    public async getNotice(
+        @Args('input') input: string,
+    ): Promise<Notice> {
+        return await this.noticeService.getNotice(input);
+    }
+
     @UseGuards(AuthGuard)
     @Query((returns) => Notices)
     public async getNotices(
