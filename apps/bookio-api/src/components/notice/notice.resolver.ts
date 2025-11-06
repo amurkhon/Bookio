@@ -10,6 +10,7 @@ import { NoticeInput, NoticeInquiry } from '../../libs/dto/notice/notice.input';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import { ObjectId } from 'mongoose';
 import { UpdateNotice } from '../../libs/dto/notice/notice.update';
+import { WithoutGuard } from '../auth/guards/without.guard';
 
 @Resolver()
 export class NoticeResolver {
@@ -27,8 +28,7 @@ export class NoticeResolver {
         return await this.noticeService.createNotice(memberId, input);
     }
 
-    @Roles(MemberType.ADMIN)
-    @UseGuards(RolesGuard)
+    @UseGuards(WithoutGuard)
     @Query((returns) => Notice)
     public async getNotice(
         @Args('input') input: string,
@@ -36,7 +36,7 @@ export class NoticeResolver {
         return await this.noticeService.getNotice(input);
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(WithoutGuard)
     @Query((returns) => Notices)
     public async getNotices(
         @Args('input') input: NoticeInquiry,

@@ -7,6 +7,7 @@ import { AuthMember } from '../auth/decorators/authMember.decorator';
 import { ObjectId } from 'mongoose';
 import { NotificationInput, NotificationsInquiry } from '../../libs/dto/notification/notification.input';
 import { shapeIntoMongoObjectId } from '../../libs/config';
+import { WithoutGuard } from '../auth/guards/without.guard';
 
 @Resolver()
 export class NotificationResolver {
@@ -24,7 +25,7 @@ export class NotificationResolver {
         return await this.notificationService.createNotification(memberId, input);
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(WithoutGuard)
     @Query((returns) => Notification)
     public async getNotification(
         @Args('notificationId') input: string,
@@ -35,7 +36,7 @@ export class NotificationResolver {
         return await this.notificationService.getNotification(memberId, articleId);
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(WithoutGuard)
     @Query((returns) => Notifications)
     public async getNotifications(
         @Args('input') input: NotificationsInquiry,
