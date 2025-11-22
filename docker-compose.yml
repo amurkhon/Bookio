@@ -1,0 +1,42 @@
+
+services:
+  nestar-api:
+    container_name: bookio-api
+    restart: always
+    image: node:20.10.0
+    ports:
+      - 5001:4007
+    volumes:
+      - ./:/usr/src/bookio
+    working_dir: /usr/src/bookio
+
+    networks:
+      - monorepo-network
+    
+    #FOR PRODUCTION
+    command: bash -c "rm -rf dist && npm install && npm run build && npm run start:prod"
+  
+  nestar-batch:
+    container_name: bookio-batch
+    restart: unless-stopped
+    image: node:20.10.0
+    ports:
+      - 5002:4008
+    volumes:
+      - ./:/usr/src/bookio
+    working_dir: /usr/src/bookio
+
+    networks:
+      - monorepo-network
+    
+    #FOR PRODUCTION
+    command: bash -c "npm install && npm run build && npm run start:prod:batch"
+
+networks:
+  monorepo-network:
+    driver: bridge
+
+
+# nestar-next: localhost:5000 <=> container:4000
+# nestar-api: localhost:5001 <=> container:4007
+# nestar-next: localhost:5002 <=> container:4008
