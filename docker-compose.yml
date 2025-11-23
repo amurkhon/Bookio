@@ -1,6 +1,6 @@
 
 services:
-  nestar-api:
+  bookio-api:
     container_name: bookio-api
     restart: always
     image: node:20.10.0
@@ -16,7 +16,7 @@ services:
     #FOR PRODUCTION
     command: bash -c "rm -rf dist && npm install && npm run build && npm run start:prod"
   
-  nestar-batch:
+  bookio-batch:
     container_name: bookio-batch
     restart: unless-stopped
     image: node:20.10.0
