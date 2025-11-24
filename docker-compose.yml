@@ -5,11 +5,7 @@ services:
     restart: always
     image: node:20.10.0
     ports:
-      - 5001:4007
-    
-    environment:
-      - PORT=4007
-
+      - 4003:4007
     volumes:
       - ./:/usr/src/bookio
     working_dir: /usr/src/bookio
@@ -25,11 +21,7 @@ services:
     restart: unless-stopped
     image: node:20.10.0
     ports:
-      - 5002:4008
-
-    environment:
-      - PORT=4008
-
+      - 4004:4008
     volumes:
       - ./:/usr/src/bookio
     working_dir: /usr/src/bookio
