@@ -15,6 +15,8 @@ import { WithoutGuard } from '../auth/guards/without.guard';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { createWriteStream } from 'fs';
 import { Message } from '../../libs/enums/common.enum';
+import { S3Client } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 
 @Resolver()
 export class MemberResolver {
@@ -204,17 +206,33 @@ export class MemberResolver {
         const validMime = validPdfTypes.includes(mimetype);
         if (!validMime) throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
 
+        const s3Client = new S3Client({
+            region: process.env.region,
+            endpoint: process.env.endpoint_url,
+            forcePathStyle: true,
+            credentials: {
+                accessKeyId: process.env.aws_access_key_id,
+                secretAccessKey: process.env.aws_secret_access_key,
+            },
+        });
+
         const pdfName = getSerialForFile(filename);
-        const url = `uploads/${target}/${pdfName}`;
+        const url = `${pdfName}`;
         const stream = createReadStream();
 
-        const result = await new Promise((resolve, reject) => {
-            stream
-                .pipe(createWriteStream(url))
-                .on('finish', async () => resolve(true))
-                .on('error', () => reject(false));
+        const upload = new Upload({
+            client: s3Client,
+            params: {
+                Bucket: 'pdf',
+                Key: url,
+                ContentType: 'application/pdf',
+                Body: stream,
+            },
         });
-        if (!result) throw new Error(Message.UPLOAD_FAILED);
+
+        await upload.done();
+        if (!upload) throw new Error(Message.UPLOAD_FAILED);
+
 
         return url;
     }
@@ -231,18 +249,33 @@ export class MemberResolver {
         if (!filename) throw new Error(Message.UPLOAD_FAILED);
         const validMime = validAudioTypes.includes(mimetype);
         if (!validMime) throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
+        
+        const s3Client = new S3Client({
+            region: process.env.region,
+            endpoint: process.env.endpoint_url,
+            forcePathStyle: true,
+            credentials: {
+                accessKeyId: process.env.aws_access_key_id,
+                secretAccessKey: process.env.aws_secret_access_key,
+            },
+        });
 
         const pdfName = getSerialForFile(filename);
-        const url = `uploads/${target}/${pdfName}`;
+        const url = `${pdfName}`;
         const stream = createReadStream();
 
-        const result = await new Promise((resolve, reject) => {
-            stream
-                .pipe(createWriteStream(url))
-                .on('finish', async () => resolve(true))
-                .on('error', () => reject(false));
+        const upload = new Upload({
+            client: s3Client,
+            params: {
+                Bucket: 'audio',
+                Key: url,
+                ContentType: 'application/zip',
+                Body: stream,
+            },
         });
-        if (!result) throw new Error(Message.UPLOAD_FAILED);
+
+        await upload.done();
+        if (!upload) throw new Error(Message.UPLOAD_FAILED);
 
         return url;
     }
