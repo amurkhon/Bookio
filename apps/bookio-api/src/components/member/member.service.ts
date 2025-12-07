@@ -2,7 +2,7 @@ import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErro
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Member, Members } from '../../libs/dto/member/member';
-import { MemberInput, LoginInput, AuthorsInquiry, MembersInquiry } from '../../libs/dto/member/member.input';
+import { MemberInput, LoginInput, AuthorsInquiry, MembersInquiry, DownloadInquiryInput } from '../../libs/dto/member/member.input';
 import { MemberStatus, MemberType } from '../../libs/enums/member.enum';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { AuthService } from '../auth/auth.service';
@@ -19,6 +19,8 @@ import { lookupAuthMemberLiked, shapeIntoMongoObjectId } from '../../libs/config
 import { NotificationService } from '../notification/notification.service';
 import { NotificationInput } from '../../libs/dto/notification/notification.input';
 import { NotificationGroup, NotificationType } from '../../libs/enums/notification.enum';
+import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Injectable()
 export class MemberService {
@@ -253,5 +255,34 @@ export class MemberService {
             {new: true}
         )
         .exec();
+    }
+
+    public async getSignedDownloadUrl(input: DownloadInquiryInput): Promise<string> {
+        const { key, target } = input;
+        const command = new GetObjectCommand({
+            Bucket: target,
+            Key: key,
+        });
+
+        const s3Client = new S3Client({
+            region: process.env.region,
+            endpoint: process.env.endpoint_url,
+            forcePathStyle: true,
+            credentials: {
+                accessKeyId: process.env.aws_access_key_id,
+                secretAccessKey: process.env.aws_secret_access_key,
+            },
+        });
+
+        // URL valid for 60 sec
+        const url = await getSignedUrl(s3Client, command, { expiresIn: 60 });
+        return url;
+    }
+
+    public async checkMembership(memberId: ObjectId): Promise<boolean> {
+        const user = await this.memberModel.findById(memberId).exec();
+        if (!user.memberMembership) throw new InternalServerErrorException(Message.SELF_SUBSCRIPTION_DENIED);
+
+        return user.memberMembership;
     }
 }

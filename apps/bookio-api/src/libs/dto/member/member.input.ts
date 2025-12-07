@@ -121,3 +121,14 @@ export class MembersInquiry {
     search: MISearch;
 
 }
+
+@InputType()
+export class DownloadInquiryInput {
+    @IsNotEmpty()
+    @Field(() => String)
+    key: string;
+
+    @IsNotEmpty()
+    @Field(() => String)
+    target: string;
+}

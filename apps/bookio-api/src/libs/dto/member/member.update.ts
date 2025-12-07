@@ -19,6 +19,10 @@ export class MemberUpdate {
     memberStatus?: MemberStatus;
 
     @IsOptional()
+    @Field(() => Boolean, { nullable: true })
+    memberMembership?: boolean;
+
+    @IsOptional()
     @Field(() => String, {nullable: true})
     memberPhone?: string;
 

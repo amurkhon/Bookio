@@ -26,6 +26,9 @@ export class Member {
     @Field(() => String)
     memberNick: string;
 
+    @Field(() => Boolean)
+    memberMembership: boolean;
+
     memberPassword?: string;
 
     @Field(() => String, {nullable: true})

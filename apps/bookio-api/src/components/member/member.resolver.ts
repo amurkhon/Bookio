@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { MemberService } from './member.service';
 import { UseGuards } from '@nestjs/common';
-import { AuthorsInquiry, LoginInput, MemberInput, MembersInquiry } from '../../libs/dto/member/member.input';
+import { AuthorsInquiry, DownloadInquiryInput, LoginInput, MemberInput, MembersInquiry } from '../../libs/dto/member/member.input';
 import { Member, Members } from '../../libs/dto/member/member';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
@@ -198,7 +198,7 @@ export class MemberResolver {
     public async pdfUploader(
         @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
-    @Args('target') target: String,
+    @Args('target') target: string,
     ): Promise<string> {
         console.log('Mutation: pdfUploader');
 
@@ -223,7 +223,7 @@ export class MemberResolver {
         const upload = new Upload({
             client: s3Client,
             params: {
-                Bucket: 'pdf',
+                Bucket: target,
                 Key: url,
                 ContentType: 'application/pdf',
                 Body: stream,
@@ -242,7 +242,7 @@ export class MemberResolver {
     public async audioUploader(
         @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
-    @Args('target') target: String,
+    @Args('target') target: string,
     ): Promise<string> {
         console.log('Mutation: pdfUploader');
 
@@ -267,7 +267,7 @@ export class MemberResolver {
         const upload = new Upload({
             client: s3Client,
             params: {
-                Bucket: 'audio',
+                Bucket: target,
                 Key: url,
                 ContentType: 'application/zip',
                 Body: stream,
@@ -278,6 +278,16 @@ export class MemberResolver {
         if (!upload) throw new Error(Message.UPLOAD_FAILED);
 
         return url;
+    }
+
+    @UseGuards(AuthGuard)
+    @Query((returns) => String)
+    public async downloadFile(
+        @Args('input') input: DownloadInquiryInput,
+        @AuthMember("_id") memberId: ObjectId,
+    ): Promise<string> {
+        await this.memberService.checkMembership(memberId);
+        return await this.memberService.getSignedDownloadUrl(input);
     }
     
 }
