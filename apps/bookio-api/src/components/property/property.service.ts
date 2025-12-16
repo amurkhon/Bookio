@@ -247,10 +247,10 @@ export class PropertyService {
         const notificationInput: NotificationInput = {
             notificationType: NotificationType.LIKE,
             notificationGroup: NotificationGroup.PROPERTY,
-            notificationTitle:'Like Property',
+            notificationTitle:'New Like',
             receiverId: shapeIntoMongoObjectId(target.memberId),
             propertyId: shapeIntoMongoObjectId(likeRefId),
-            notificationDesc: 'This person liked your book!'
+            notificationDesc: 'liked your book'
         }
 
         if( modifier > 0)

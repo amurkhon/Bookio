@@ -59,10 +59,10 @@ export class CommentService {
                 const notificationPropertyInput: NotificationInput = {
                     notificationType: NotificationType.COMMENT,
                     notificationGroup: NotificationGroup.PROPERTY,
-                    notificationTitle:'Comment property',
+                    notificationTitle:'New Comment',
                     receiverId: shapeIntoMongoObjectId(property.memberId),
                     propertyId: shapeIntoMongoObjectId(input.commentRefId),
-                    notificationDesc: input.commentContent,
+                    notificationDesc: "commented on your book",
                 }
                 await this.notificationService.createNotification(memberId, notificationPropertyInput);
 
@@ -77,10 +77,10 @@ export class CommentService {
                 const notificationArticleInput: NotificationInput = {
                     notificationType: NotificationType.COMMENT,
                     notificationGroup: NotificationGroup.ARTICLE,
-                    notificationTitle:'Comment Article',
+                    notificationTitle:'New Comment',
                     receiverId: shapeIntoMongoObjectId(article.memberId),
                     articleId: shapeIntoMongoObjectId(input.commentRefId),
-                    notificationDesc: input.commentContent,
+                    notificationDesc: "commented on your article",
                 }
                 await this.notificationService.createNotification(memberId, notificationArticleInput);
 
@@ -95,9 +95,9 @@ export class CommentService {
                 const notificationMemberInput: NotificationInput = {
                     notificationType: NotificationType.COMMENT,
                     notificationGroup: NotificationGroup.MEMBER,
-                    notificationTitle:'Comment Member',
+                    notificationTitle:'New Comment',
                     receiverId: shapeIntoMongoObjectId(member._id),
-                    notificationDesc: input.commentContent,
+                    notificationDesc: "commented on your profile",
                 }
                 await this.notificationService.createNotification(memberId, notificationMemberInput);
 

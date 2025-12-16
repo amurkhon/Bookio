@@ -172,10 +172,10 @@ export class BoardArticleService {
         const notificationInput: NotificationInput = {
             notificationType: NotificationType.LIKE,
             notificationGroup: NotificationGroup.ARTICLE,
-            notificationTitle:'Like Article',
+            notificationTitle:'New Like',
             receiverId: shapeIntoMongoObjectId(target.memberId),
             articleId: shapeIntoMongoObjectId(target._id),
-            notificationDesc: 'This person liked your post!'
+            notificationDesc: 'liked your post'
         }
 
         if( modifier > 0)

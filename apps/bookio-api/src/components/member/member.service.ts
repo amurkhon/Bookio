@@ -191,9 +191,9 @@ export class MemberService {
         const notificationInput: NotificationInput = {
             notificationType: NotificationType.LIKE,
             notificationGroup: NotificationGroup.MEMBER,
-            notificationTitle:'Like Member',
+            notificationTitle:'New Like',
             receiverId: shapeIntoMongoObjectId(likeRefId),
-            notificationDesc: 'This person liked you!'
+            notificationDesc: 'liked your profile'
         }
 
         if( modifier > 0)
