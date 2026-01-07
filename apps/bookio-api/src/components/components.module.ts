@@ -11,6 +11,8 @@ import { DownloadModule } from './download/download.module';
 import { NotificationModule } from './notification/notification.module';
 import { NoticeModule } from './notice/notice.module';
 import { OpenaiModule } from './openai/openai.module';
+import { OrderModule } from './order/order.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { OpenaiModule } from './openai/openai.module';
     NotificationModule,
     NoticeModule,
     OpenaiModule,
+    OrderModule,
+    PaymentModule,
   ],
 })
 export class ComponentsModule {}

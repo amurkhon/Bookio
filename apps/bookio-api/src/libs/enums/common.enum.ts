@@ -20,6 +20,19 @@ export enum Message {
     NOT_ALLOWED_REQUEST = "Not Allowed Request!",
     PROVIDE_ALLOWED_FORMAT = "Please provide jpg, jpeg or png images!",
     SELF_SUBSCRIPTION_DENIED = "Self subscription is denied!",
+    MUST_PURCHASE_BEFORE_DOWNLOADING = "You must purchase this book before downloading!",
+    ALREADY_DOWNLOADED = "You have already downloaded this book!",
+    ORDER_NOT_FOUND = "Order not found!",
+    ALREADY_PURCHASED = "You have already purchased this item!",
+    PAYMENT_FAILED = "Payment processing failed!",
+    ORDER_CANCELLED = "Order has been cancelled!",
+    ORDER_COMPLETED = "Order has been completed!",
+    ORDER_PROCESSING = "Order is being processed!",
+    ORDER_PENDING = "Order is pending!",
+    ORDER_REFUNDED = "Order has been refunded!",
+    ORDER_FAILED = "Order has failed!",
+    ORDER_SUCCESS = "Order has been successful!",
+    ORDER_CREATED = "Order has been created!",
 }
 
 export enum Direction {

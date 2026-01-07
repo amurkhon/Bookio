@@ -5,12 +5,14 @@ import { DownloadResolver } from './download.resolver';
 import DownloadSchema from '../../schemas/downloads';
 import { PropertyModule } from '../property/property.module';
 import { AuthModule } from '../auth/auth.module';
+import { OrderModule } from '../order/order.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{name: 'Download', schema: DownloadSchema}]),
     PropertyModule,
-    AuthModule
+    AuthModule,
+    OrderModule
   ],
   providers: [DownloadService, DownloadResolver],
   exports: [DownloadService],
