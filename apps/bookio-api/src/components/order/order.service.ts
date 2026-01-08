@@ -7,6 +7,7 @@ import { OrderStatus, PaymentStatus } from '../../libs/enums/order.enum';
 import { Message, Direction } from '../../libs/enums/common.enum';
 import { PropertyService } from '../property/property.service';
 import { PropertyStatus } from '../../libs/enums/property.enum';
+import { Property } from '../../libs/dto/property/property';
 import { shapeIntoMongoObjectId, lookupMember } from '../../libs/config';
 import { T } from '../../libs/types/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,9 +18,42 @@ import { MemberService } from '../member/member.service';
 export class OrderService {
     constructor(
         @InjectModel('Order') private readonly orderModel: Model<Order>,
+        @InjectModel('Property') private readonly propertyModel: Model<Property>,
         private propertyService: PropertyService,
         private memberService: MemberService,
     ) {}
+
+    /**
+     * Populate propertyData for each order item
+     */
+    private async populateOrderItemsPropertyData(order: any): Promise<any> {
+        if (!order.items || !Array.isArray(order.items)) {
+            return order;
+        }
+
+        const itemsWithPropertyData = await Promise.all(
+            order.items.map(async (item: any) => {
+                if (item.propertyId) {
+                    try {
+                        const property = await this.propertyModel
+                            .findOne({ _id: item.propertyId })
+                            .lean()
+                            .exec();
+                        
+                        if (property) {
+                            item.propertyData = property;
+                        }
+                    } catch (err) {
+                        console.log(`Error fetching property ${item.propertyId}:`, err.message);
+                    }
+                }
+                return item;
+            })
+        );
+
+        order.items = itemsWithPropertyData;
+        return order;
+    }
 
     public async createOrder(memberId: ObjectId, input: CreateOrderInput): Promise<Order> {
         // Validate and fetch properties
@@ -80,6 +114,7 @@ export class OrderService {
         try {
             const order = await this.orderModel.create(orderData);
             order.memberData = await this.memberService.getMember(null, memberId);
+            await this.populateOrderItemsPropertyData(order);
             return order;
         } catch (err) {
             console.log('Error creating order:', err.message);
@@ -100,6 +135,7 @@ export class OrderService {
             throw new InternalServerErrorException(Message.NO_DATA_FOUND);
         }
         order.memberData = await this.memberService.getMember(null, memberId);
+        await this.populateOrderItemsPropertyData(order);
 
         return order;
     }
@@ -136,7 +172,15 @@ export class OrderService {
             throw new InternalServerErrorException(Message.NO_DATA_FOUND);
         }
 
-        return result[0];
+        // Populate propertyData for each order in the list
+        const orders = result[0];
+        if (orders.list && Array.isArray(orders.list)) {
+            orders.list = await Promise.all(
+                orders.list.map((order: any) => this.populateOrderItemsPropertyData(order))
+            );
+        }
+
+        return orders;
     }
 
     public async confirmPayment(memberId: ObjectId, input: ConfirmPaymentInput): Promise<Order> {
@@ -172,6 +216,7 @@ export class OrderService {
             throw new InternalServerErrorException(Message.UPDATE_FAILED);
         }
         updatedOrder.memberData = await this.memberService.getMember(null, memberId);
+        await this.populateOrderItemsPropertyData(updatedOrder);
 
         return updatedOrder;
     }
@@ -205,6 +250,7 @@ export class OrderService {
             throw new InternalServerErrorException(Message.UPDATE_FAILED);
         }
         cancelledOrder.memberData = await this.memberService.getMember(null, memberId);
+        await this.populateOrderItemsPropertyData(cancelledOrder);
 
         return cancelledOrder;
     }
@@ -252,6 +298,14 @@ export class OrderService {
             throw new InternalServerErrorException(Message.NO_DATA_FOUND);
         }
 
-        return result[0];
+        // Populate propertyData for each order in the list
+        const orders = result[0];
+        if (orders.list && Array.isArray(orders.list)) {
+            orders.list = await Promise.all(
+                orders.list.map((order: any) => this.populateOrderItemsPropertyData(order))
+            );
+        }
+
+        return orders;
     }
 }

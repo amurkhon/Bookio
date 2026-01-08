@@ -7,6 +7,7 @@ import { PropertyModule } from '../property/property.module';
 import { AuthModule } from '../auth/auth.module';
 import { PaymentModule } from '../payment/payment.module';
 import { MemberModule } from '../member/member.module';
+import PropertySchema from '../../schemas/Property.model';
 
 @Module({
     imports: [
@@ -16,6 +17,12 @@ import { MemberModule } from '../member/member.module';
                 schema: OrderSchema,
             },
         ]),
+        MongooseModule.forFeature([
+            { 
+            name: 'Property', 
+            schema: PropertySchema 
+            }
+        ]), 
         PropertyModule,
         AuthModule, 
         PaymentModule,
