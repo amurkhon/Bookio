@@ -97,7 +97,5 @@ const OrderSchema = new Schema(
 );
 
 OrderSchema.index({ memberId: 1, createdAt: -1 });
-OrderSchema.index({ orderNumber: 1 }, { unique: true });
-OrderSchema.index({ paymentIntentId: 1 }, { sparse: true });
 
 export default OrderSchema;
