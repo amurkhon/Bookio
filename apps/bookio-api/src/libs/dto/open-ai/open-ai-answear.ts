@@ -17,3 +17,18 @@ export class OpenAIMessageDto {
     annotations?: string[] | null;
 
 }
+
+@ObjectType()
+export class InquiryHistoryDto {
+    @Field(() => String)
+    memberId: string;
+
+    @Field(() => String)
+    question: string;
+
+    @Field(() => String)
+    answer: string;
+
+    @Field(() => String)
+    createdAt: string;
+}

@@ -27,7 +27,7 @@ export const getSerialForFile = (filename: string) => {
 };
 
 export const shapeIntoMongoObjectId = (target: any) => {
-    return typeof target === 'string' ? new ObjectId(target) : target;
+    return typeof target === 'string' ? new ObjectId(target) : target.toString();
 }
 export const lookupAuthMemberLiked = (memberId: T, targetRefId: string = '$_id') => {
 	return {

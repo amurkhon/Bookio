@@ -9,6 +9,7 @@ import { ComponentsModule } from './components/components.module';
 import { DatabaseModule } from './database/database.module';
 import { T } from './libs/types/common';
 import { SocketModule } from './socket/socket.module';
+import { RedisDatabaseModule } from './redis-database/redis-database.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { SocketModule } from './socket/socket.module';
     ComponentsModule,
     DatabaseModule,
     SocketModule,
+    RedisDatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],
