@@ -8,9 +8,9 @@ import Redis from 'ioredis';
       provide: 'REDIS_CLIENT',
       useFactory: () => {
         const client = new Redis({
-          host: 'redis-15409.c73.us-east-1-2.ec2.cloud.redislabs.com',
-          port: 15409,
-          password: 'dTt72PVVfaJTHgGYFw5crYxdnaPV5GxC',
+          host: 'redis-18011.c322.us-east-1-2.ec2.cloud.redislabs.com',
+          port: 18011,
+          password: 'nYHVAotLbJADv8eMvqrsig308O5t2kCB',
         });
 
         client.on('error', (err) => console.error('Redis Error', err));
